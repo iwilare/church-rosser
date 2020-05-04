@@ -7,10 +7,6 @@ open import DeBruijn
 open import Substitution
 open import Beta
 
---------------------------------------------
--- Definition of parallel β-reduction (⇉) --
---------------------------------------------
-
 infix 4 _⇉_
 
 data _⇉_ : ∀ {n} → Term n → Term n → Set where
@@ -19,25 +15,26 @@ data _⇉_ : ∀ {n} → Term n → Term n → Set where
       ---------
     → # x ⇉ # x
 
-  ⇉-ƛ : ∀ {n} {M N : Term (suc n)}
-    → M ⇉ N
+  ⇉-ƛ : ∀ {n} {M M′ : Term (suc n)}
+    → M ⇉ M′
       ---------
-    → ƛ M ⇉ ƛ N
+    → ƛ M ⇉ ƛ M′
 
-  ⇉-ξ : ∀ {n} {N N′ M M′ : Term n}
-    → N ⇉ N′
+  ⇉-ξ : ∀ {n} {M M′ N N′ : Term n}
     → M ⇉ M′
+    → N ⇉ N′
       ---------------
-    → N · M ⇉ N′ · M′
+    → M · N ⇉ M′ · N′
 
-  ⇉-β : ∀{n} {N N′ : Term (suc n)}{M M′ : Term n}
-    → N ⇉ N′
+  ⇉-β : ∀ {n} {M M′ : Term (suc n)} {N N′ : Term n}
     → M ⇉ M′
+    → N ⇉ N′
       ---------------------
-    → (ƛ N) · M ⇉ N′ [ M′ ]
+    → (ƛ M) · N ⇉ M′ [ N′ ]
+
 
 par-subst : ∀{n m} → Subst n m → Subst n m → Set
-par-subst {n}{m} σ σ′ = ∀{x : Fin n} → σ x ⇉ σ′ x
+par-subst {n}{m} σ σ′ = ∀ {x : Fin n} → σ x ⇉ σ′ x
 
 
 par-rename : ∀{n m} {ρ : Rename n m} {M M′ : Term n}
@@ -48,20 +45,21 @@ par-rename ⇉-c = ⇉-c
 par-rename (⇉-ƛ p) = ⇉-ƛ (par-rename p)
 par-rename (⇉-ξ p₁ p₂) = ⇉-ξ (par-rename p₁) (par-rename p₂)
 par-rename {n}{m}{ρ} (⇉-β {n}{N}{N′}{M}{M′} p₁ p₂)
-    with ⇉-β (par-rename{ρ = ext ρ} p₁) (par-rename{ρ = ρ} p₂)
-... | G rewrite rename-subst-commute{n}{m}{N′}{M′}{ρ} = G
+    with ⇉-β (par-rename {ρ = ext ρ} p₁) (par-rename{ρ = ρ} p₂)
+... | G rewrite rename-subst-commute {n}{m}{N′}{M′}{ρ} = G
 
 
 par-subst-exts : ∀{n m} {σ τ : Subst n m}
   → par-subst σ τ
-    ------------------------------------------
+    ---------------------------
   → par-subst (exts σ) (exts τ)
 par-subst-exts s {x = zero} = ⇉-c
 par-subst-exts s {x = suc x} = par-rename s
 
 
 subst-par : ∀{n m} {σ τ : Subst n m} {M M′ : Term n}
-  → par-subst σ τ → M ⇉ M′
+  → par-subst σ τ
+  → M ⇉ M′
     ----------------------
   → subst σ M ⇉ subst τ M′
 subst-par {M = # x} s ⇉-c = s
@@ -70,28 +68,26 @@ subst-par {n}{m}{σ}{τ} {ƛ N} s (⇉-ƛ p) =
         (λ {x} → par-subst-exts s {x = x}) p)
 subst-par {M = L · M} s (⇉-ξ p₁ p₂) =
   ⇉-ξ (subst-par s p₁) (subst-par s p₂)
-subst-par {n}{m}{σ}{τ} {(ƛ N) · M} s (⇉-β {N′ = N′}{M′ = M′} p₁ p₂)
-    with ⇉-β (subst-par{σ = exts σ}{τ = exts τ}{M = N}
+subst-par {n}{m}{σ}{τ} {(ƛ N) · M} s (⇉-β {M′ = M′}{N′ = N′} p₁ p₂)
+    with ⇉-β (subst-par {σ = exts σ}{τ = exts τ}{M = N}
                         (λ{x} → par-subst-exts s {x = x}) p₁)
                (subst-par {σ = σ} s p₂)
-... | G rewrite subst-commute{N = N′}{M = M′}{σ = τ} = G
+... | G rewrite subst-commute {N = M′}{M = N′}{σ = τ} = G
 
 par-subst-zero : ∀ {n} {M M′ : Term n}
-       → M ⇉ M′
-       → par-subst (subst-zero M) (subst-zero M′)
-par-subst-zero {M} {M′} p {zero} = p
-par-subst-zero {M} {M′} p {suc x} = ⇉-c
-
-sub-par : ∀{n} {N N′ : Term (suc n)} {M M′ : Term n}
-  → N ⇉ N′
   → M ⇉ M′
-    --------------------
-  → N [ M ] ⇉ N′ [ M′ ]
-sub-par pn pm = subst-par (par-subst-zero pm) pn
+    ----------------------------------------
+  → par-subst (subst-zero M) (subst-zero M′)
+par-subst-zero {M}{M′} p {zero} = p
+par-subst-zero {M}{M′} p {suc x} = ⇉-c
 
---------------------------------------------
--- Parallel reduction implies β-reduction --
---------------------------------------------
+sub-par : ∀{n} {M M′ : Term (suc n)} {N N′ : Term n}
+  → M ⇉ M′
+  → N ⇉ N′
+    -------------------
+  → M [ N ] ⇉ M′ [ N′ ]
+sub-par M⇉M′ N⇉N′ = subst-par (par-subst-zero N⇉N′) M⇉M′
+
 
 par-refl : ∀ {n} {M : Term n}
     -----
@@ -105,8 +101,8 @@ beta-par : ∀{n} {M N : Term n}
   → M —→ N
     ------
   → M ⇉ N
-beta-par {M = L · M} (—→-ξ₁ r) = ⇉-ξ (beta-par {M = L} r) par-refl
-beta-par {M = L · M} (—→-ξ₂ r) = ⇉-ξ par-refl (beta-par {M = M} r)
+beta-par {M = L · M} (—→-ξₗ r) = ⇉-ξ (beta-par {M = L} r) par-refl
+beta-par {M = L · M} (—→-ξᵣ r) = ⇉-ξ par-refl (beta-par {M = M} r)
 beta-par {M = ƛ N} (—→-ƛ r) = ⇉-ƛ (beta-par r)
 beta-par {M = (ƛ N) · M} —→-β = ⇉-β par-refl par-refl
 
@@ -116,16 +112,14 @@ par-betas : ∀ {n} {M N : Term n}
     ------
   → M —↠ N
 par-betas {M = (# _)} (⇉-c {x = x}) = # x ∎
-par-betas {M = ƛ N} (⇉-ƛ p) = abs-cong (par-betas p)
-par-betas {M = L · M} (⇉-ξ p₁ p₂) =
-   —↠-trans (appL-cong (par-betas p₁))
-            (appR-cong (par-betas p₂))
-par-betas {M = (ƛ N) · M} (⇉-β {N′ = N′}{M′ = M′} p₁ p₂) =
-  let a : (ƛ N) · M —↠ (ƛ N′) · M
-      a = appL-cong (abs-cong (par-betas p₁)) 
-      b : (ƛ N′) · M —↠ (ƛ N′) · M′
-      b = appR-cong (par-betas p₂)
-      c = (ƛ N′) · M′ —→⟨ —→-β ⟩ N′ [ M′ ] ∎ in
+par-betas {M = ƛ M} (⇉-ƛ p) = —↠-ƛ-cong (par-betas p)
+par-betas {M = M · N} (⇉-ξ p₁ p₂) = —↠-cong (par-betas p₁) (par-betas p₂)
+par-betas {M = (ƛ M) · N} (⇉-β {M′ = M′}{N′ = N′} p₁ p₂) =
+  let a : (ƛ M) · N —↠ (ƛ M′) · N
+      a = —↠-congₗ (—↠-ƛ-cong (par-betas p₁))
+      b : (ƛ M′) · N —↠ (ƛ M′) · N′
+      b = —↠-congᵣ (par-betas p₂)
+      c = (ƛ M′) · N′ —→⟨ —→-β ⟩ M′ [ N′ ] ∎ in
   —↠-trans (—↠-trans a b) c
 
 

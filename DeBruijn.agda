@@ -2,22 +2,14 @@ import Relation.Binary.PropositionalEquality as Eq
 open import Data.Nat using (ℕ; zero; suc)
 open import Data.Fin hiding (_+_; #_)
 
----------------------------
--- Definition of ƛ-terms --
----------------------------
-
 infix  9  #_
 infixl 7  _·_
 infix  6  ƛ_
 
 data Term : ℕ → Set where
-  #_  : ∀ {n : ℕ} → Fin n           → Term n
-  ƛ_  : ∀ {n : ℕ} → Term (suc n)    → Term n
-  _·_ : ∀ {n : ℕ} → Term n → Term n → Term n
-
-----------------------------
--- de Bruijn substitution --
-----------------------------
+    #_  : ∀ {n : ℕ} → Fin n           → Term n
+    ƛ_  : ∀ {n : ℕ} → Term (suc n)    → Term n
+    _·_ : ∀ {n : ℕ} → Term n → Term n → Term n
 
 Rename : ℕ → ℕ → Set
 Rename n m = Fin n → Fin m

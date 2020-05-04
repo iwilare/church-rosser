@@ -11,7 +11,7 @@ postulate
     → (∀ (x : A) → f x ≡ g x)
       -----------------------
     → f ≡ g
-    
+
 --------------------------
 -- σ-algebra operations --
 --------------------------
@@ -27,13 +27,13 @@ ids x = # x
 
 infix 6 _•_
 
-_•_ : ∀ {n m} → Term m → Subst n m → Subst (suc n) m 
+_•_ : ∀ {n m} → Term m → Subst n m → Subst (suc n) m
 (M • σ) zero    = M
 (M • σ) (suc x) = σ x
 
 infixr 5 _⨟_
 
-_⨟_ : ∀{n k m} → Subst n k → Subst k m → Subst n m
+_⨟_ : ∀ {n k m} → Subst n k → Subst k m → Subst n m
 σ ⨟ τ = ⟪ τ ⟫ ∘ σ
 
 -------------------------
@@ -56,7 +56,7 @@ sub-idL : ∀ {n m} {σ : Subst n m}
 sub-idL = extensionality λ x → refl
 
 sub-dist :  ∀ {n m k} {σ : Subst n m} {τ : Subst m k} {M : Term m}
-         → ((M • σ) ⨟ τ) ≡ ((subst τ M) • (σ ⨟ τ)) 
+         → ((M • σ) ⨟ τ) ≡ ((subst τ M) • (σ ⨟ τ))
 sub-dist {n}{m}{k}{σ}{τ}{M} = extensionality λ x → lemma {x = x}
   where
   lemma : ∀ {x : Fin (suc n)} → ((M • σ) ⨟ τ) x ≡ ((subst τ M) • (σ ⨟ τ)) x
@@ -110,8 +110,8 @@ cong-sub-zero : ∀ {n} {M M′ : Term n}
   → M ≡ M′
     -----------------------------------------
   → subst-zero M ≡ (subst-zero M′)
-cong-sub-zero {n}{M}{M′} mm' =
-   extensionality λ x → cong (λ z → subst-zero z x) mm'
+cong-sub-zero {n}{M}{M′} mm′ =
+   extensionality λ x → cong (λ z → subst-zero z x) mm′
 
 cong-cons : ∀ {n m}{M N : Term m}{σ τ : Subst n m}
   → M ≡ N  →  (σ ≡ τ)
@@ -126,7 +126,7 @@ cong-cons{n}{m}{M}{N}{σ}{τ} refl st = extensionality lemma
 cong-seq : ∀ {n m k}{σ σ′ : Subst n m}{τ τ′ : Subst m k}
   → (σ ≡ σ′) → (τ ≡ τ′)
   → (σ ⨟ τ) ≡ (σ′ ⨟ τ′)
-cong-seq {n}{m}{k}{σ}{σ′}{τ}{τ′} ss' tt' = extensionality lemma
+cong-seq {n}{m}{k}{σ}{σ′}{τ}{τ′} ss′ tt′ = extensionality lemma
   where
   lemma : (x : Fin n) → (σ ⨟ τ) x ≡ (σ′ ⨟ τ′) x
   lemma x =
@@ -134,14 +134,14 @@ cong-seq {n}{m}{k}{σ}{σ′}{τ}{τ′} ss' tt' = extensionality lemma
        (σ ⨟ τ) x
      ≡⟨⟩
        subst τ (σ x)
-     ≡⟨ cong (subst τ) (cong-app ss' x) ⟩
+     ≡⟨ cong (subst τ) (cong-app ss′ x) ⟩
        subst τ (σ′ x)
-     ≡⟨ cong-sub{M = σ′ x} tt' refl ⟩
+     ≡⟨ cong-sub{M = σ′ x} tt′ refl ⟩
        subst τ′ (σ′ x)
      ≡⟨⟩
        (σ′ ⨟ τ′) x
      ∎
-     
+
 
 
 
@@ -222,7 +222,7 @@ sub-idR {n}{σ = σ} =
           ∎
 
 compose-ext : ∀ {n m k}{ρ : Rename m k} {ρ′ : Rename n m}
-            → ((ext ρ) ∘ (ext ρ′)) ≡ ext (ρ ∘ ρ′) 
+            → ((ext ρ) ∘ (ext ρ′)) ≡ ext (ρ ∘ ρ′)
 compose-ext = extensionality λ x → lemma {x = x}
   where
   lemma : ∀ {n m k}{ρ : Rename m k} {ρ′ : Rename n m} {x : Fin (suc n)}
@@ -362,54 +362,53 @@ subst-zero-exts-cons {n}{m}{σ}{M} =
       M • σ
     ∎
 
-subst-commute : ∀ {n m}{N : Term (suc n)}{M : Term n}{σ : Subst n m }
-    → ⟪ exts σ ⟫ N [ ⟪ σ ⟫ M ] ≡ ⟪ σ ⟫ (N [ M ])
-subst-commute {n}{m}{N}{M}{σ} =
-     begin
-       ⟪ exts σ ⟫ N [ ⟪ σ ⟫ M ]
-     ≡⟨⟩
-       ⟪ subst-zero (⟪ σ ⟫ M) ⟫ (⟪ exts σ ⟫ N)
-     ≡⟨ cong-sub {M = ⟪ exts σ ⟫ N} subst-zero-cons-ids refl ⟩
-       ⟪ ⟪ σ ⟫ M • ids ⟫ (⟪ exts σ ⟫ N)
-     ≡⟨ sub-sub {M = N} ⟩
-       ⟪ (exts σ) ⨟ ((⟪ σ ⟫ M) • ids) ⟫ N
-     ≡⟨ cong-sub {M = N} (cong-seq exts-cons-shift refl) refl ⟩
-       ⟪ (# zero • (σ ⨟ ↑)) ⨟ (⟪ σ ⟫ M • ids) ⟫ N
-     ≡⟨ cong-sub {M = N} (sub-dist {M = # zero}) refl ⟩
-       ⟪ ⟪ ⟪ σ ⟫ M • ids ⟫ (# zero) • ((σ ⨟ ↑) ⨟ (⟪ σ ⟫ M • ids)) ⟫ N
-     ≡⟨⟩
-       ⟪ ⟪ σ ⟫ M • ((σ ⨟ ↑) ⨟ (⟪ σ ⟫ M • ids)) ⟫ N
-     ≡⟨ cong-sub{M = N} (cong-cons refl (sub-assoc{σ = σ})) refl ⟩
-       ⟪ ⟪ σ ⟫ M • (σ ⨟ ↑ ⨟ ⟪ σ ⟫ M • ids) ⟫ N
-     ≡⟨ cong-sub{M = N} refl refl ⟩
-       ⟪ ⟪ σ ⟫ M • (σ ⨟ ids) ⟫ N
-     ≡⟨ cong-sub{M = N} (cong-cons refl (sub-idR{σ = σ})) refl ⟩
-       ⟪ ⟪ σ ⟫ M • σ ⟫ N
-     ≡⟨ cong-sub{M = N} (cong-cons refl (sub-idL{σ = σ})) refl ⟩
-       ⟪ ⟪ σ ⟫ M • (ids ⨟ σ) ⟫ N
-     ≡⟨ cong-sub{M = N} (sym sub-dist) refl ⟩
-       ⟪ M • ids ⨟ σ ⟫ N
-     ≡⟨ sym (sub-sub{M = N}) ⟩
-       ⟪ σ ⟫ (⟪ M • ids ⟫ N)
-     ≡⟨ cong ⟪ σ ⟫ (sym (cong-sub{M = N} subst-zero-cons-ids refl)) ⟩
-       ⟪ σ ⟫ (N [ M ])
-     ∎
+subst-commute : ∀ {n m} {N : Term (suc n)} {M : Term n} {σ : Subst n m}
+  → ⟪ exts σ ⟫ N [ ⟪ σ ⟫ M ] ≡ ⟪ σ ⟫ (N [ M ])
+subst-commute {n} {m} {N} {M} {σ} =
+  begin
+    ⟪ exts σ ⟫ N [ ⟪ σ ⟫ M ]
+  ≡⟨⟩
+    ⟪ subst-zero (⟪ σ ⟫ M) ⟫ (⟪ exts σ ⟫ N)
+  ≡⟨ cong-sub {M = ⟪ exts σ ⟫ N} subst-zero-cons-ids refl ⟩
+    ⟪ ⟪ σ ⟫ M • ids ⟫ (⟪ exts σ ⟫ N)
+  ≡⟨ sub-sub {M = N} ⟩
+    ⟪ (exts σ) ⨟ ((⟪ σ ⟫ M) • ids) ⟫ N
+  ≡⟨ cong-sub {M = N} (cong-seq exts-cons-shift refl) refl ⟩
+  ⟪ (# zero • (σ ⨟ ↑)) ⨟ (⟪ σ ⟫ M • ids) ⟫ N
+  ≡⟨ cong-sub {M = N} (sub-dist {M = # zero}) refl ⟩
+    ⟪ ⟪ ⟪ σ ⟫ M • ids ⟫ (# zero) • ((σ ⨟ ↑) ⨟ (⟪ σ ⟫ M • ids)) ⟫ N
+  ≡⟨⟩
+    ⟪ ⟪ σ ⟫ M • ((σ ⨟ ↑) ⨟ (⟪ σ ⟫ M • ids)) ⟫ N
+  ≡⟨ cong-sub {M = N} (cong-cons refl (sub-assoc {σ = σ})) refl ⟩
+    ⟪ ⟪ σ ⟫ M • (σ ⨟ ↑ ⨟ ⟪ σ ⟫ M • ids) ⟫ N
+  ≡⟨ cong-sub {M = N} refl refl ⟩
+    ⟪ ⟪ σ ⟫ M • (σ ⨟ ids) ⟫ N
+  ≡⟨ cong-sub {M = N} (cong-cons refl (sub-idR {σ = σ})) refl ⟩
+    ⟪ ⟪ σ ⟫ M • σ ⟫ N
+  ≡⟨ cong-sub {M = N} (cong-cons refl (sub-idL {σ = σ})) refl ⟩
+    ⟪ ⟪ σ ⟫ M • (ids ⨟ σ) ⟫ N
+  ≡⟨ cong-sub {M = N} (sym sub-dist) refl ⟩
+    ⟪ M • ids ⨟ σ ⟫ N
+  ≡⟨ sym (sub-sub {M = N}) ⟩
+    ⟪ σ ⟫ (⟪ M • ids ⟫ N)
+  ≡⟨ cong ⟪ σ ⟫ (sym (cong-sub {M = N} subst-zero-cons-ids refl)) ⟩
+    ⟪ σ ⟫ (N [ M ])
+  ∎
 
-rename-subst-commute : ∀ {n m}{N : Term (suc n)}{M : Term n}{ρ : Rename n m }
-    → (rename (ext ρ) N) [ rename ρ M ] ≡ rename ρ (N [ M ])
-rename-subst-commute {n}{m}{N}{M}{ρ} =
-     begin
-       (rename (ext ρ) N) [ rename ρ M ]
-     ≡⟨ cong-sub (cong-sub-zero (rename-subst-ren{M = M}))
-                 (rename-subst-ren{M = N}) ⟩
-       (⟪ ren (ext ρ) ⟫ N) [ ⟪ ren ρ ⟫ M ]
-     ≡⟨ cong-sub refl (cong-sub{M = N} ren-ext refl) ⟩
-       (⟪ exts (ren ρ) ⟫ N) [ ⟪ ren ρ ⟫ M ]
-     ≡⟨ subst-commute{N = N} ⟩
-       subst (ren ρ) (N [ M ])
-     ≡⟨ sym (rename-subst-ren) ⟩
-       rename ρ (N [ M ])
-     ∎
+rename-subst-commute : ∀ {n m} {N : Term (suc n)} {M : Term n} {ρ : Rename n m }
+  → (rename (ext ρ) N) [ rename ρ M ] ≡ rename ρ (N [ M ])
+rename-subst-commute {n} {m} {N} {M} {ρ} =
+  begin
+    (rename (ext ρ) N) [ rename ρ M ]
+  ≡⟨ cong-sub (cong-sub-zero (rename-subst-ren {M = M})) (rename-subst-ren {M = N}) ⟩
+    (⟪ ren (ext ρ) ⟫ N) [ ⟪ ren ρ ⟫ M ]
+  ≡⟨ cong-sub refl (cong-sub {M = N} ren-ext refl) ⟩
+    (⟪ exts (ren ρ) ⟫ N) [ ⟪ ren ρ ⟫ M ]
+  ≡⟨ subst-commute {N = N} ⟩
+    subst (ren ρ) (N [ M ])
+  ≡⟨ sym (rename-subst-ren) ⟩
+    rename ρ (N [ M ])
+  ∎
 
 infix 8 _〔_〕
 
@@ -420,7 +419,7 @@ _〔_〕 : ∀ {n}
         → Term (suc n)
 _〔_〕 N M =
    subst (exts (subst-zero M)) N
-   
+
 substitution-lemma : ∀{n}{M : Term (suc (suc n))}{N : Term (suc n)}{L : Term n}
     → (M [ N ]) [ L ] ≡ (M 〔 L 〕) [ (N [ L ]) ]
 substitution-lemma{M = M}{N = N}{L = L} =
