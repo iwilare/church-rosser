@@ -17,7 +17,7 @@ data _⇉_ : ∀ {n} → Term n → Term n → Set where
 
   ⇉-ƛ : ∀ {n} {M M′ : Term (suc n)}
     → M ⇉ M′
-      ---------
+      ----------
     → ƛ M ⇉ ƛ M′
 
   ⇉-ξ : ∀ {n} {M M′ N N′ : Term n}
@@ -34,7 +34,7 @@ data _⇉_ : ∀ {n} → Term n → Term n → Set where
 
 
 par-subst : ∀{n m} → Subst n m → Subst n m → Set
-par-subst {n}{m} σ σ′ = ∀ {x : Fin n} → σ x ⇉ σ′ x
+par-subst σ σ′ = ∀ {x} → σ x ⇉ σ′ x
 
 
 par-rename : ∀{n m} {ρ : Rename n m} {M M′ : Term n}
@@ -45,7 +45,7 @@ par-rename ⇉-c = ⇉-c
 par-rename (⇉-ƛ p) = ⇉-ƛ (par-rename p)
 par-rename (⇉-ξ p₁ p₂) = ⇉-ξ (par-rename p₁) (par-rename p₂)
 par-rename {n}{m}{ρ} (⇉-β {n}{N}{N′}{M}{M′} p₁ p₂)
-    with ⇉-β (par-rename {ρ = ext ρ} p₁) (par-rename{ρ = ρ} p₂)
+    with ⇉-β (par-rename {ρ = ext ρ} p₁) (par-rename {ρ = ρ} p₂)
 ... | G rewrite rename-subst-commute {n}{m}{N′}{M′}{ρ} = G
 
 
@@ -64,13 +64,13 @@ subst-par : ∀{n m} {σ τ : Subst n m} {M M′ : Term n}
   → subst σ M ⇉ subst τ M′
 subst-par {M = # x} s ⇉-c = s
 subst-par {n}{m}{σ}{τ} {ƛ N} s (⇉-ƛ p) =
-  ⇉-ƛ (subst-par {σ = exts σ} {τ = exts τ}
+  ⇉-ƛ (subst-par {σ = exts σ}{τ = exts τ}
         (λ {x} → par-subst-exts s {x = x}) p)
 subst-par {M = L · M} s (⇉-ξ p₁ p₂) =
   ⇉-ξ (subst-par s p₁) (subst-par s p₂)
 subst-par {n}{m}{σ}{τ} {(ƛ N) · M} s (⇉-β {M′ = M′}{N′ = N′} p₁ p₂)
     with ⇉-β (subst-par {σ = exts σ}{τ = exts τ}{M = N}
-                        (λ{x} → par-subst-exts s {x = x}) p₁)
+                        (λ {x} → par-subst-exts s {x = x}) p₁)
                (subst-par {σ = σ} s p₂)
 ... | G rewrite subst-commute {N = M′}{M = N′}{σ = τ} = G
 
@@ -112,11 +112,11 @@ par-betas : ∀ {n} {M N : Term n}
     ------
   → M —↠ N
 par-betas {M = (# _)} (⇉-c {x = x}) = # x ∎
-par-betas {M = ƛ M} (⇉-ƛ p) = —↠-ƛ-cong (par-betas p)
+par-betas {M = ƛ M} (⇉-ƛ p) = —↠-cong-ƛ (par-betas p)
 par-betas {M = M · N} (⇉-ξ p₁ p₂) = —↠-cong (par-betas p₁) (par-betas p₂)
 par-betas {M = (ƛ M) · N} (⇉-β {M′ = M′}{N′ = N′} p₁ p₂) =
   let a : (ƛ M) · N —↠ (ƛ M′) · N
-      a = —↠-congₗ (—↠-ƛ-cong (par-betas p₁))
+      a = —↠-congₗ (—↠-cong-ƛ (par-betas p₁))
       b : (ƛ M′) · N —↠ (ƛ M′) · N′
       b = —↠-congᵣ (par-betas p₂)
       c = (ƛ M′) · N′ —→⟨ —→-β ⟩ M′ [ N′ ] ∎ in

@@ -7,9 +7,9 @@ infixl 7  _·_
 infix  6  ƛ_
 
 data Term : ℕ → Set where
-    #_  : ∀ {n : ℕ} → Fin n           → Term n
-    ƛ_  : ∀ {n : ℕ} → Term (suc n)    → Term n
-    _·_ : ∀ {n : ℕ} → Term n → Term n → Term n
+  #_  : ∀ {n : ℕ} → Fin n           → Term n
+  ƛ_  : ∀ {n : ℕ} → Term (suc n)    → Term n
+  _·_ : ∀ {n : ℕ} → Term n → Term n → Term n
 
 Rename : ℕ → ℕ → Set
 Rename n m = Fin n → Fin m
@@ -23,17 +23,17 @@ ext ρ (suc x) = suc (ρ x)
 
 rename : ∀ {n m} → Rename n m → (Term n → Term m)
 rename ρ (# x)   = # (ρ x)
-rename ρ (ƛ N)   = ƛ (rename (ext ρ) N)
-rename ρ (L · M) = (rename ρ L) · (rename ρ M)
+rename ρ (ƛ M)   = ƛ (rename (ext ρ) M)
+rename ρ (M · N) = rename ρ M · rename ρ N
 
 exts : ∀ {n m} → Subst n m → Subst (suc n) (suc m)
 exts σ zero    = # zero
 exts σ (suc x) = rename suc (σ x)
 
 subst : ∀ {n m} → Subst n m → (Term n → Term m)
-subst σ (# k)   = σ k
-subst σ (ƛ N)   = ƛ (subst (exts σ) N)
-subst σ (L · M) = subst σ L · subst σ M
+subst σ (# x)   = σ x
+subst σ (ƛ M)   = ƛ (subst (exts σ) M)
+subst σ (M · N) = subst σ M · subst σ N
 
 subst-zero : ∀ {n} → Term n → Subst (suc n) n
 subst-zero M zero    = M

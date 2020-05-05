@@ -9,6 +9,7 @@ open import Substitution
 open import Beta
 open import ChurchRosser
 open import Parallel
+open import Takahashi
 
 infix 5 _*₍_₎
 
@@ -32,7 +33,7 @@ data _—↠₍_₎_ : ∀ {n} → Term n → ℕ → Term n → Set where
 lemma3-2 : ∀ {n} {M : Term n}
   → M —↠ M *
 lemma3-2 {M = # x}       = # x ∎
-lemma3-2 {M = ƛ _}       = —↠-ƛ-cong lemma3-2
+lemma3-2 {M = ƛ _}       = —↠-cong-ƛ lemma3-2
 lemma3-2 {M = # _ · _}   = —↠-congᵣ  lemma3-2
 lemma3-2 {M = _ · _ · _} = —↠-cong   lemma3-2 lemma3-2
 lemma3-2 {M = (ƛ M) · N} = (ƛ M) · N —→⟨ —→-β ⟩ (sub-betas {M = M} lemma3-2 lemma3-2)
@@ -43,7 +44,7 @@ lemma3-3 : ∀ {n} {M N : Term n}
     --------
   → N —↠ M *
 lemma3-3 {M = # _} ()
-lemma3-3 {M = ƛ M}         (—→-ƛ M—→N)          = —↠-ƛ-cong (lemma3-3 M—→N)
+lemma3-3 {M = ƛ M}         (—→-ƛ M—→N)          = —↠-cong-ƛ (lemma3-3 M—→N)
 lemma3-3 {M = # _ · M}     (—→-ξᵣ M—→M′)        = —↠-congᵣ  (lemma3-3 M—→M′)
 lemma3-3 {M = _ · _   · M} (—→-ξᵣ M—→M′)        = —↠-cong  lemma3-2          (lemma3-3 M—→M′)
 lemma3-3 {M = M₁ · M₂ · _} (—→-ξₗ M₁M₂—↠M′)     = —↠-cong (lemma3-3 M₁M₂—↠M′) lemma3-2
@@ -101,7 +102,7 @@ exts-ts-commute {n}{m}{σ} = extensionality exts-ts-commute′
 subst-ts : ∀ {n m} (σ : Subst n m) (M : Term n)
   → subst (ts σ) (M *) —↠ (subst σ M) *
 subst-ts σ (# x) = σ x * ∎
-subst-ts σ (ƛ M) rewrite exts-ts-commute {σ = σ} = —↠-ƛ-cong (subst-ts (exts σ) M)
+subst-ts σ (ƛ M) rewrite exts-ts-commute {σ = σ} = —↠-cong-ƛ (subst-ts (exts σ) M)
 subst-ts σ (# x · N) = —↠-trans (—↠-cong (subst-ts σ (# x)) (subst-ts σ N))
                                 (app-*-join (σ x))
 subst-ts σ (M₁ · M₂ · N) = —↠-cong (subst-ts σ (M₁ · M₂)) (subst-ts σ N)
@@ -125,7 +126,7 @@ lemma3-5 : ∀ {n} {M N : Term n}
     ----------
   → M * —↠ N *
 lemma3-5 {M = # x} M—→N = # x —→⟨ M—→N ⟩ lemma3-2
-lemma3-5 {M = ƛ _}     (—→-ƛ  M—→N)   = —↠-ƛ-cong (lemma3-5 M—→N)
+lemma3-5 {M = ƛ _}     (—→-ƛ  M—→N)   = —↠-cong-ƛ (lemma3-5 M—→N)
 lemma3-5 {M = # _ · _} (—→-ξᵣ M₂—→M′) = —↠-congᵣ (lemma3-5 M₂—→M′)
 lemma3-5 {M = (ƛ M₁) · M₂} —→-β                  = lemma3-4 M₁ M₂
 lemma3-5 {M = (ƛ M₁) · M₂} (—→-ξₗ (—→-ƛ M₁—→N′)) = sub-betas (lemma3-5 M₁—→N′) (M₂ * ∎)
