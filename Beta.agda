@@ -166,11 +166,3 @@ sub-betas : ∀ {n} {M M′ : Term (suc n)} {N N′ : Term n}
     --------------------
   → M [ N ] —↠ M′ [ N′ ]
 sub-betas M—↠M′ N—↠N′ = subst-betas (betas-subst-zero N—↠N′) M—↠M′
-
-
-beta-complete : ∀ {n} {N N′ : Term (suc n)} {M M′ : Term n}
-  → N —↠ N′
-  → M —↠ M′
-    ----------------------
-  → (ƛ N) · M —↠ N′ [ M′ ]
-beta-complete {N = N}{M = M} N—↠N′ M—↠M′ = (ƛ N) · M —→⟨ —→-β ⟩ (sub-betas N—↠N′ M—↠M′)

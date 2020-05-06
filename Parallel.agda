@@ -41,45 +41,47 @@ par-rename : ∀{n m} {ρ : Rename n m} {M M′ : Term n}
   → M ⇉ M′
     ------------------------
   → rename ρ M ⇉ rename ρ M′
-par-rename ⇉-c = ⇉-c
-par-rename (⇉-ƛ p) = ⇉-ƛ (par-rename p)
+par-rename ⇉-c         = ⇉-c
+par-rename (⇉-ƛ p)     = ⇉-ƛ (par-rename p)
 par-rename (⇉-ξ p₁ p₂) = ⇉-ξ (par-rename p₁) (par-rename p₂)
 par-rename {n}{m}{ρ} (⇉-β {n}{N}{N′}{M}{M′} p₁ p₂)
     with ⇉-β (par-rename {ρ = ext ρ} p₁) (par-rename {ρ = ρ} p₂)
 ... | G rewrite rename-subst-commute {n}{m}{N′}{M′}{ρ} = G
 
 
-par-subst-exts : ∀{n m} {σ τ : Subst n m}
-  → par-subst σ τ
+par-subst-exts : ∀{n m} {σ σ′ : Subst n m}
+  → par-subst σ σ′
     ---------------------------
-  → par-subst (exts σ) (exts τ)
+  → par-subst (exts σ) (exts σ′)
 par-subst-exts s {x = zero} = ⇉-c
 par-subst-exts s {x = suc x} = par-rename s
 
 
-subst-par : ∀{n m} {σ τ : Subst n m} {M M′ : Term n}
-  → par-subst σ τ
+subst-par : ∀{n m} {σ σ′ : Subst n m} {M M′ : Term n}
+  → par-subst σ σ′
   → M ⇉ M′
     ----------------------
-  → subst σ M ⇉ subst τ M′
+  → subst σ M ⇉ subst σ′ M′
 subst-par {M = # x} s ⇉-c = s
-subst-par {n}{m}{σ}{τ} {ƛ N} s (⇉-ƛ p) =
-  ⇉-ƛ (subst-par {σ = exts σ}{τ = exts τ}
-        (λ {x} → par-subst-exts s {x = x}) p)
+subst-par {n}{m}{σ}{σ′} {ƛ N} s (⇉-ƛ p) =
+  ⇉-ƛ (subst-par {σ = exts σ}{σ′ = exts σ′}
+         (λ {x} → par-subst-exts s {x = x}) p)
 subst-par {M = L · M} s (⇉-ξ p₁ p₂) =
   ⇉-ξ (subst-par s p₁) (subst-par s p₂)
-subst-par {n}{m}{σ}{τ} {(ƛ N) · M} s (⇉-β {M′ = M′}{N′ = N′} p₁ p₂)
-    with ⇉-β (subst-par {σ = exts σ}{τ = exts τ}{M = N}
+subst-par {n}{m}{σ}{σ′} {(ƛ N) · M} s (⇉-β {M′ = M′}{N′ = N′} p₁ p₂)
+    with ⇉-β (subst-par {σ = exts σ}{σ′ = exts σ′}{M = N}
                         (λ {x} → par-subst-exts s {x = x}) p₁)
-               (subst-par {σ = σ} s p₂)
-... | G rewrite subst-commute {N = M′}{M = N′}{σ = τ} = G
+             (subst-par {σ = σ} s p₂)
+... | G rewrite subst-commute {N = M′}{M = N′}{σ = σ′} = G
+
 
 par-subst-zero : ∀ {n} {M M′ : Term n}
   → M ⇉ M′
     ----------------------------------------
   → par-subst (subst-zero M) (subst-zero M′)
-par-subst-zero {M}{M′} p {zero} = p
-par-subst-zero {M}{M′} p {suc x} = ⇉-c
+par-subst-zero M⇉M′ {zero} = M⇉M′
+par-subst-zero M⇉M′ {suc x} = ⇉-c
+
 
 sub-par : ∀{n} {M M′ : Term (suc n)} {N N′ : Term n}
   → M ⇉ M′
@@ -111,7 +113,7 @@ par-betas : ∀ {n} {M N : Term n}
   → M ⇉ N
     ------
   → M —↠ N
-par-betas {M = (# _)} (⇉-c {x = x}) = # x ∎
+par-betas {M = # _} (⇉-c {x = x}) = # x ∎
 par-betas {M = ƛ M} (⇉-ƛ p) = —↠-cong-ƛ (par-betas p)
 par-betas {M = M · N} (⇉-ξ p₁ p₂) = —↠-cong (par-betas p₁) (par-betas p₂)
 par-betas {M = (ƛ M) · N} (⇉-β {M′ = M′}{N′ = N′} p₁ p₂) =
@@ -144,8 +146,7 @@ betas-pars : ∀ {n} {M N : Term n}
     ------
   → M ⇉* N
 betas-pars (M₁ ∎) = M₁ ∎
-betas-pars {n} {.L} {N} (L —→⟨ b ⟩ bs) =
-   L ⇉⟨ beta-par b ⟩ betas-pars bs
+betas-pars (L —→⟨ b ⟩ bs) = L ⇉⟨ beta-par b ⟩ betas-pars bs
 
 
 pars-betas : ∀ {n} {M N : Term n}

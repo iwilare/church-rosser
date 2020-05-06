@@ -36,7 +36,7 @@ lemma3-2 {M = # x}       = # x ∎
 lemma3-2 {M = ƛ _}       = —↠-cong-ƛ lemma3-2
 lemma3-2 {M = # _ · _}   = —↠-congᵣ  lemma3-2
 lemma3-2 {M = _ · _ · _} = —↠-cong   lemma3-2 lemma3-2
-lemma3-2 {M = (ƛ M) · N} = (ƛ M) · N —→⟨ —→-β ⟩ (sub-betas {M = M} lemma3-2 lemma3-2)
+lemma3-2 {M = (ƛ M) · N} = (ƛ M) · N —→⟨ —→-β ⟩ sub-betas {M = M} lemma3-2 lemma3-2
 
 
 lemma3-3 : ∀ {n} {M N : Term n}
@@ -44,20 +44,20 @@ lemma3-3 : ∀ {n} {M N : Term n}
     --------
   → N —↠ M *
 lemma3-3 {M = # _} ()
-lemma3-3 {M = ƛ M}         (—→-ƛ M—→N)          = —↠-cong-ƛ (lemma3-3 M—→N)
-lemma3-3 {M = # _ · M}     (—→-ξᵣ M—→M′)        = —↠-congᵣ  (lemma3-3 M—→M′)
-lemma3-3 {M = _ · _   · M} (—→-ξᵣ M—→M′)        = —↠-cong  lemma3-2          (lemma3-3 M—→M′)
-lemma3-3 {M = M₁ · M₂ · _} (—→-ξₗ M₁M₂—↠M′)     = —↠-cong (lemma3-3 M₁M₂—↠M′) lemma3-2
-lemma3-3 {M = (ƛ M) · N}   (—→-ξᵣ N—→M′)        = beta-complete  lemma3-2       (lemma3-3 N—→M′)
-lemma3-3 {M = (ƛ M) · N}   (—→-ξₗ (—→-ƛ M—→N′)) = beta-complete (lemma3-3 M—→N′) lemma3-2
-lemma3-3 {M = (ƛ M) · N}   —→-β                 = sub-betas {M = M} lemma3-2 lemma3-2
+lemma3-3 {M = ƛ M}         (—→-ƛ M—→M′)  = —↠-cong-ƛ (lemma3-3 M—→M′)
+lemma3-3 {M = # _     · N} (—→-ξᵣ N—→N′) = —↠-congᵣ  (lemma3-3 N—→N′)
+lemma3-3 {M = _ · _   · N} (—→-ξᵣ N—→N′) = —↠-cong  lemma3-2       (lemma3-3 N—→N′)
+lemma3-3 {M = M₁ · M₂ · _} (—→-ξₗ M—↠M′) = —↠-cong (lemma3-3 M—↠M′) lemma3-2
+lemma3-3 {M = (ƛ M) · N}   —→-β          = sub-betas {M = M} lemma3-2 lemma3-2
+lemma3-3 {M = (ƛ M) · N}   (—→-ξᵣ       {N′ = N′} N—→N′)  = (ƛ M ) · N′ —→⟨ —→-β ⟩ sub-betas {M = M} lemma3-2 (lemma3-3 N—→N′)
+lemma3-3 {M = (ƛ M) · N}   (—→-ξₗ (—→-ƛ {M′ = M′} M—→M′)) = (ƛ M′) · N  —→⟨ —→-β ⟩ sub-betas {N = N} (lemma3-3 M—→M′) lemma3-2
 
 
-app-*-join : ∀ {n} (M : Term n) {N : Term n}
+app-*-join : ∀ {n} (M N : Term n)
   → M * · N * —↠ (M · N) *
-app-*-join (# x)     {N} = # x · N * ∎
-app-*-join (ƛ M)     {N} = (ƛ M *) · N * —→⟨ —→-β ⟩ subst (subst-zero (N *)) (M *) ∎
-app-*-join (M₁ · M₂) {N} = (M₁ · M₂) * · N * ∎
+app-*-join (# x)     N = # x · N * ∎
+app-*-join (ƛ M)     N = (ƛ M *) · N * —→⟨ —→-β ⟩ subst (subst-zero (N *)) (M *) ∎
+app-*-join (M₁ · M₂) N = (M₁ · M₂) * · N * ∎
 
 
 rename-* : ∀ {n m} (ρ : Rename n m) (M : Term n)
@@ -104,21 +104,21 @@ subst-ts : ∀ {n m} (σ : Subst n m) (M : Term n)
 subst-ts σ (# x) = σ x * ∎
 subst-ts σ (ƛ M) rewrite exts-ts-commute {σ = σ} = —↠-cong-ƛ (subst-ts (exts σ) M)
 subst-ts σ (# x · N) = —↠-trans (—↠-cong (subst-ts σ (# x)) (subst-ts σ N))
-                                (app-*-join (σ x))
+                                (app-*-join (σ x) (subst σ N))
 subst-ts σ (M₁ · M₂ · N) = —↠-cong (subst-ts σ (M₁ · M₂)) (subst-ts σ N)
 subst-ts σ ((ƛ N) · M) rewrite sym (subst-commute {N = N *}{M = M *}{σ = ts σ})
                              | exts-ts-commute {σ = σ}
                              = sub-betas (subst-ts (exts σ) N) (subst-ts σ M)
 
 
-subst-zero-ts-commute : ∀ {n} {N : Term n}
+subst-zero-ts : ∀ {n} {N : Term n}
   → subst-zero (N *) ≡ ts (subst-zero N)
-subst-zero-ts-commute = extensionality (λ{ zero → refl ; (suc r) → refl })
+subst-zero-ts = extensionality (λ { zero → refl ; (suc r) → refl })
 
 
 lemma3-4 : ∀ {n} (M : Term (suc n)) (N : Term n)
   → M * [ N * ] —↠ (M [ N ]) *
-lemma3-4 M N rewrite subst-zero-ts-commute {N = N} = subst-ts (subst-zero N) M
+lemma3-4 M N rewrite subst-zero-ts {N = N} = subst-ts (subst-zero N) M
 
 
 lemma3-5 : ∀ {n} {M N : Term n}
@@ -126,17 +126,18 @@ lemma3-5 : ∀ {n} {M N : Term n}
     ----------
   → M * —↠ N *
 lemma3-5 {M = # x} M—→N = # x —→⟨ M—→N ⟩ lemma3-2
-lemma3-5 {M = ƛ _}     (—→-ƛ  M—→N)   = —↠-cong-ƛ (lemma3-5 M—→N)
-lemma3-5 {M = # _ · _} (—→-ξᵣ M₂—→M′) = —↠-congᵣ (lemma3-5 M₂—→M′)
-lemma3-5 {M = (ƛ M₁) · M₂} —→-β                  = lemma3-4 M₁ M₂
-lemma3-5 {M = (ƛ M₁) · M₂} (—→-ξₗ (—→-ƛ M₁—→N′)) = sub-betas (lemma3-5 M₁—→N′) (M₂ * ∎)
-lemma3-5 {M = (ƛ M₁) · M₂} (—→-ξᵣ M₂—→M′)        = sub-betas (M₁ * ∎) (lemma3-5 M₂—→M′)
-lemma3-5 {M = M₁ · M₂ · _} (—→-ξᵣ K—→M′)                     = —↠-congᵣ (lemma3-5 K—→M′)
-lemma3-5 {M = M₁ · M₂ · _} (—→-ξₗ {M′ = # x}     M₁M₂—→#x)   = —↠-congₗ (lemma3-5 M₁M₂—→#x)
-lemma3-5 {M = M₁ · M₂ · _} (—→-ξₗ {M′ = N₁ · N₂} M₁M₂—→N₁N₂) = —↠-congₗ (lemma3-5 M₁M₂—→N₁N₂)
-lemma3-5 {M = M₁ · M₂ · K} (—→-ξₗ {M′ = ƛ N₁} M₁M₂—→ƛN₁)     =
-  —↠-trans (—↠-congₗ (lemma3-5 M₁M₂—→ƛN₁))
-           ((ƛ N₁ *) · K * —→⟨ —→-β ⟩ subst (subst-zero (K *)) (N₁ *) ∎)
+lemma3-5 {M = ƛ M}         (—→-ƛ  M—→M′)  = —↠-cong-ƛ (lemma3-5 M—→M′)
+lemma3-5 {M = # _     · N} (—→-ξᵣ M₂—→M′) = —↠-congᵣ  (lemma3-5 M₂—→M′)
+lemma3-5 {M = (ƛ M)   · N}  —→-β                 = lemma3-4 M N
+lemma3-5 {M = (ƛ M)   · N} (—→-ξₗ (—→-ƛ M—→M′)) = sub-betas (lemma3-5 M—→M′) (N * ∎)
+lemma3-5 {M = (ƛ M)   · N} (—→-ξᵣ N—→N′)        = sub-betas (M * ∎) (lemma3-5 N—→N′)
+lemma3-5 {M = M₁ · M₂ · _} (—→-ξᵣ N—→N′)                         = —↠-congᵣ (lemma3-5 N—→N′)
+lemma3-5 {M = M₁ · M₂ · _} (—→-ξₗ {M′ = # x}       M₁M₂—→#x)     = —↠-congₗ (lemma3-5 M₁M₂—→#x)
+lemma3-5 {M = M₁ · M₂ · _} (—→-ξₗ {M′ = M′₁ · M′₂} M₁M₂—→M′₁M′₂) = —↠-congₗ (lemma3-5 M₁M₂—→M′₁M′₂)
+lemma3-5 {M = M₁ · M₂ · K} (—→-ξₗ {M′ = ƛ M′}      M₁M₂—→ƛM′)    =
+  —↠-trans (—↠-congₗ (lemma3-5 M₁M₂—→ƛM′))
+           ((ƛ M′ *) · K * —→⟨ —→-β ⟩ subst (subst-zero (K *)) (M′ *) ∎)
+
 
 corollary3-6 : ∀ {n} {M N : Term n}
   → M   —↠ N
