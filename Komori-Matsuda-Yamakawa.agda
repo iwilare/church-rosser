@@ -144,7 +144,7 @@ corollary3-6 : ∀ {n} {M N : Term n}
     ----------
   → M * —↠ N *
 corollary3-6 (M ∎) = M * ∎
-corollary3-6 (_ —→⟨ r ⟩ M—↠N) = —↠-trans (lemma3-5 r) (corollary3-6 M—↠N)
+corollary3-6 (M —→⟨ M—→L ⟩ L—↠N) = —↠-trans (lemma3-5 M—→L) (corollary3-6 L—↠N)
 
 
 corollary3-7 : ∀ {n} {M N : Term n} (m : ℕ)
@@ -160,8 +160,8 @@ theorem3-8 : ∀ {n} {M N : Term n} {m : ℕ}
     -------------
   → N —↠ M *₍ m ₎
 theorem3-8 {m = zero}  (M ∎) = M ∎
-theorem3-8 {m = suc m} (L —→₍₎⟨ L—→M ⟩ M—↠ₘN) =
-  —↠-trans (theorem3-8 M—↠ₘN) (corollary3-7 m (lemma3-3 L—→M))
+theorem3-8 {m = suc m} (M —→₍₎⟨ M—→L ⟩ L—↠ₘN) =
+  —↠-trans (theorem3-8 L—↠ₘN) (corollary3-7 m (lemma3-3 M—→L))
 
 
 unnamed-named : ∀ {n} {M N : Term n}
@@ -169,8 +169,8 @@ unnamed-named : ∀ {n} {M N : Term n}
     --------------------
   → ∃[ m ] (M —↠₍ m ₎ N)
 unnamed-named (M ∎) = zero , (M ∎)
-unnamed-named (L —→⟨ L—→M ⟩ M—↠N) with unnamed-named M—↠N
-... | m′ , M—↠ₘ′N = suc m′ , (L —→₍₎⟨ L—→M ⟩ M—↠ₘ′N)
+unnamed-named (M —→⟨ M—→L ⟩ L—↠N) with unnamed-named L—↠N
+... | m′ , L—↠ₘ′N = suc m′ , (M —→₍₎⟨ M—→L ⟩ L—↠ₘ′N)
 
 
 triangle : ∀ {k} {m n : ℕ} {M : Term k}

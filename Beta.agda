@@ -39,20 +39,20 @@ data _—↠_ : ∀ {n} → Term n → Term n → Set where
       ------
     → M —↠ M
 
-  _—→⟨_⟩_ : ∀ {n} {N T : Term n} (M : Term n)
-    → M —→ T
-    → T —↠ N
+  _—→⟨_⟩_ : ∀ {n} {N L : Term n} (M : Term n)
+    → M —→ L
+    → L —↠ N
       ------
     → M —↠ N
 
 
-—↠-trans : ∀{n} {M N T : Term n}
-  → M —↠ T
-  → T —↠ N
+—↠-trans : ∀{n} {M N L : Term n}
+  → M —↠ L
+  → L —↠ N
     ------
   → M —↠ N
 —↠-trans (M ∎)                 M—↠M = M—↠M
-—↠-trans (M —→⟨ M—→T′ ⟩ T′—↠T) T—↠N = M —→⟨ M—→T′ ⟩ (—↠-trans T′—↠T T—↠N )
+—↠-trans (M —→⟨ M—→L′ ⟩ L′—↠L) L—↠N = M —→⟨ M—→L′ ⟩ (—↠-trans L′—↠L L—↠N )
 
 
 —↠-congₗ : ∀ {n} {M M′ R : Term n}
@@ -60,7 +60,7 @@ data _—↠_ : ∀ {n} → Term n → Term n → Set where
     ---------------
   → M · R —↠ M′ · R
 —↠-congₗ {M = M}{R = R} (M ∎)                = M · R ∎
-—↠-congₗ {M = M}{R = R} (M —→⟨ M—→T ⟩ T—↠M′) = M · R —→⟨ —→-ξₗ M—→T ⟩ —↠-congₗ T—↠M′
+—↠-congₗ {M = M}{R = R} (M —→⟨ M—→L ⟩ L—↠M′) = M · R —→⟨ —→-ξₗ M—→L ⟩ —↠-congₗ L—↠M′
 
 
 —↠-congᵣ : ∀ {n} {M M′ L : Term n}
@@ -68,7 +68,7 @@ data _—↠_ : ∀ {n} → Term n → Term n → Set where
     ---------------
   → L · M —↠ L · M′
 —↠-congᵣ {M = M}{L = L} (M ∎)                = L · M ∎
-—↠-congᵣ {M = M}{L = L} (M —→⟨ M—→T ⟩ T—↠M′) = L · M —→⟨ —→-ξᵣ M—→T ⟩ —↠-congᵣ T—↠M′
+—↠-congᵣ {M = M}{L = L} (M —→⟨ M—→L ⟩ L—↠M′) = L · M —→⟨ —→-ξᵣ M—→L ⟩ —↠-congᵣ L—↠M′
 
 
 —↠-cong-ƛ : ∀ {n} {M M′ : Term (suc n)}
@@ -76,7 +76,7 @@ data _—↠_ : ∀ {n} → Term n → Term n → Set where
     -----------
   → ƛ M —↠ ƛ M′
 —↠-cong-ƛ (M ∎)                = ƛ M ∎
-—↠-cong-ƛ (M —→⟨ M—→T ⟩ T—↠N′) = ƛ M —→⟨ —→-ƛ M—→T ⟩ —↠-cong-ƛ T—↠N′
+—↠-cong-ƛ (M —→⟨ M—→L ⟩ L—↠N′) = ƛ M —→⟨ —→-ƛ M—→L ⟩ —↠-cong-ƛ L—↠N′
 
 
 —↠-cong : ∀ {n} {M M′ N N′ : Term n}
@@ -109,7 +109,7 @@ betas-rename : ∀ {n m} {ρ : Rename n m} {M M′ : Term n}
     -------------------------
   → rename ρ M —↠ rename ρ M′
 betas-rename {ρ = ρ} (M ∎)                = rename ρ M ∎
-betas-rename {ρ = ρ} (M —→⟨ M—→T ⟩ T—↠M′) = rename ρ M —→⟨ beta-rename M—→T ⟩ betas-rename T—↠M′
+betas-rename {ρ = ρ} (M —→⟨ M—→L ⟩ L—↠M′) = rename ρ M —→⟨ beta-rename M—→L ⟩ betas-rename L—↠M′
 
 
 betas-subst-exts : ∀ {n m} {σ σ′ : Subst n m}
@@ -148,8 +148,8 @@ subst-betas : ∀ {n m} {σ σ′ : Subst n m} {M M′ : Term n}
     ------------------------
   → subst σ M —↠ subst σ′ M′
 subst-betas σ—↠σ′ (M ∎) = subst-betas-sub {M = M} σ—↠σ′
-subst-betas {σ = σ} σ—↠σ′ (M —→⟨ M—→T ⟩ T—↠M′) =
-  subst σ M —→⟨ subst-beta-term M—→T ⟩ subst-betas σ—↠σ′ T—↠M′
+subst-betas {σ = σ} σ—↠σ′ (M —→⟨ M—→L ⟩ L—↠M′) =
+  subst σ M —→⟨ subst-beta-term M—→L ⟩ subst-betas σ—↠σ′ L—↠M′
 
 
 betas-subst-zero : ∀ {n} {M M′ : Term n}

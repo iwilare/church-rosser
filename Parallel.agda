@@ -135,18 +135,19 @@ data _⇉*_ : ∀ {n} → Term n → Term n → Set where
       ------
     → M ⇉* M
 
-  _⇉⟨_⟩_ : ∀ {n} (L : Term n) {M N : Term n}
-    → L ⇉  M
-    → M ⇉* N
-      ------
+  _⇉⟨_⟩_ : ∀ {n} {N L : Term n} (M : Term n)
+    → M ⇉  L
     → L ⇉* N
+      ------
+    → M ⇉* N
+
 
 betas-pars : ∀ {n} {M N : Term n}
   → M —↠ N
     ------
   → M ⇉* N
-betas-pars (M₁ ∎) = M₁ ∎
-betas-pars (L —→⟨ b ⟩ bs) = L ⇉⟨ beta-par b ⟩ betas-pars bs
+betas-pars (M ∎) = M ∎
+betas-pars (M —→⟨ b ⟩ bs) = M ⇉⟨ beta-par b ⟩ betas-pars bs
 
 
 pars-betas : ∀ {n} {M N : Term n}
@@ -154,4 +155,4 @@ pars-betas : ∀ {n} {M N : Term n}
     ------
   → M —↠ N
 pars-betas (M ∎) = M ∎
-pars-betas (L ⇉⟨ p ⟩ ps) = —↠-trans (par-betas p) (pars-betas ps)
+pars-betas (M ⇉⟨ p ⟩ ps) = —↠-trans (par-betas p) (pars-betas ps)
