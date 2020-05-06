@@ -3,7 +3,6 @@ open import Data.Product using (∃; ∃-syntax; _×_; _,_)
 open import DeBruijn
 open import Parallel
 open import Beta
-open import Takahashi
 
 
 par-diamond : ∀ {n} {M N N′ : Term n}
@@ -68,11 +67,11 @@ par-confluence {B = B} (M ⇉⟨ M⇉A ⟩ A⇉*A′) M⇉*B
         N′ , A′⇉*N′ , (B ⇉⟨ B⇉N ⟩ N⇉*N′)
 
 
-confluence : ∀ {n} {M M₁ M₂ : Term n}
-  →          M  —↠ M₁ →  M  —↠ M₂
-    ------------------------------
-  → ∃[ N ] ((M₁ —↠ N) × (M₂ —↠ N))
-confluence M—↠M₁ M—↠M₂
-    with par-confluence (betas-pars M—↠M₁) (betas-pars M—↠M₂)
-... | N , M₁⇉*N , M₂⇉*N =
-      N , pars-betas M₁⇉*N , pars-betas M₂⇉*N
+confluence : ∀ {n} {M A B : Term n}
+  →          M —↠ A  →  M —↠ B
+    ----------------------------
+  → ∃[ N ] ((A —↠ N) × (B —↠ N))
+confluence M—↠A M—↠B
+    with par-confluence (betas-pars M—↠A) (betas-pars M—↠B)
+... | N , A⇉*N , B⇉*N =
+      N , pars-betas A⇉*N , pars-betas B⇉*N

@@ -13,16 +13,16 @@ theorem5 : ∀ {n} {M N : Term n}
 theorem5 {M = # x} ⇉-c = ⇉-c
 theorem5 {M = ƛ M} (⇉-ƛ M⇉N) = ⇉-ƛ (theorem5 M⇉N)
 theorem5 {M = (ƛ M) · N} (⇉-β M⇉M′ N⇉N′) = sub-par (theorem5 M⇉M′) (theorem5 N⇉N′)
-theorem5 {M = # _     · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (theorem5 M⇉M′) (theorem5 N⇉N′)
-theorem5 {M = M₁ · M₂ · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (theorem5 M⇉M′) (theorem5 N⇉N′)
-theorem5 {M = (ƛ M)   · N} (⇉-ξ (⇉-ƛ M⇉M′) N⇉N′) = ⇉-β (theorem5 M⇉M′) (theorem5 N⇉N′)
+theorem5 {M = # _   · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (theorem5 M⇉M′) (theorem5 N⇉N′)
+theorem5 {M = _ · _ · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (theorem5 M⇉M′) (theorem5 N⇉N′)
+theorem5 {M = (ƛ _) · N} (⇉-ξ (⇉-ƛ M⇉M′) N⇉N′) = ⇉-β (theorem5 M⇉M′) (theorem5 N⇉N′)
 
 
-par-diamond : ∀ {n} {M M₁ M₂ : Term n}
-  →          M  ⇉ M₁  → M  ⇉ M₂
-    ----------------------------
-  → ∃[ N ] ((M₁ ⇉ N) × (M₂ ⇉ N))
-par-diamond {M = M} M⇉M₁ M⇉M₂ = M * , theorem5 M⇉M₁ , theorem5 M⇉M₂
+par-diamond : ∀ {n} {M A B : Term n}
+  →          M ⇉ A  →  M ⇉ B
+    --------------------------
+  → ∃[ N ] ((A ⇉ N) × (B ⇉ N))
+par-diamond {M = M} M⇉A M⇉B = M * , theorem5 M⇉A , theorem5 M⇉B
 
 
 strip : ∀ {n} {M A B : Term n}
@@ -51,11 +51,11 @@ par-confluence {B = B} (M ⇉⟨ M⇉A ⟩ A⇉*A′) M⇉*B
         N′ , A′⇉*N′ , (B ⇉⟨ B⇉N ⟩ N⇉*N′)
 
 
-confluence : ∀ {n} {M M₁ M₂ : Term n}
-  →          M  —↠ M₁ →  M  —↠ M₂
-    ------------------------------
-  → ∃[ N ] ((M₁ —↠ N) × (M₂ —↠ N))
-confluence M—↠M₁ M—↠M₂
-    with par-confluence (betas-pars M—↠M₁) (betas-pars M—↠M₂)
-... | N , M₁⇉*N , M₂⇉*N =
-      N , pars-betas M₁⇉*N , pars-betas M₂⇉*N
+confluence : ∀ {n} {M A B : Term n}
+  →          M —↠ A  →  M —↠ B
+    ----------------------------
+  → ∃[ N ] ((A —↠ N) × (B —↠ N))
+confluence M—↠A M—↠B
+    with par-confluence (betas-pars M—↠A) (betas-pars M—↠B)
+... | N , A⇉*N , B⇉*N =
+      N , pars-betas A⇉*N , pars-betas B⇉*N

@@ -183,21 +183,21 @@ triangle {n = suc n} z≤n = —↠-trans lemma3-2 (triangle {n = n} z≤n)
 triangle {n = suc n} (s≤s k) = triangle k
 
 
-theorem3-9 : ∀ {n} {M M₁ M₂ : Term n}
-  →          M  —↠ M₁ →  M  —↠ M₂
-    ------------------------------
-  → ∃[ N ] ((M₁ —↠ N) × (M₂ —↠ N))
-theorem3-9 {n}{M} M—↠M₁ M—↠M₂ =
-    let n , Mₙ—↠M₁ = unnamed-named M—↠M₁
-        m , Mₘ—↠M₂ = unnamed-named M—↠M₂
-        M₁—↠Mⁿ* = theorem3-8 Mₙ—↠M₁
-        M₂—↠Mᵐ* = theorem3-8 Mₘ—↠M₂
+theorem3-9 : ∀ {n} {M A B : Term n}
+  →          M —↠ A  →  M —↠ B
+    ----------------------------
+  → ∃[ N ] ((A —↠ N) × (B —↠ N))
+theorem3-9 {M = M} M—↠A M—↠B =
+    let n , M—↠ₙA = unnamed-named M—↠A
+        m , M—↠ₘB = unnamed-named M—↠B
+        A—↠M*ⁿ = theorem3-8 M—↠ₙA
+        B—↠M*ᵐ = theorem3-8 M—↠ₘB
      in [ (λ n≤m →
-            let Mⁿ*—↠Mᵐ* : M *₍ n ₎ —↠ M *₍ m ₎
-                Mⁿ*—↠Mᵐ* = triangle n≤m
-             in M *₍ m ₎ , —↠-trans M₁—↠Mⁿ* Mⁿ*—↠Mᵐ* , M₂—↠Mᵐ*)
+            let M*ⁿ—↠M*ᵐ : M *₍ n ₎ —↠ M *₍ m ₎
+                M*ⁿ—↠M*ᵐ = triangle n≤m
+             in M *₍ m ₎ , —↠-trans A—↠M*ⁿ M*ⁿ—↠M*ᵐ , B—↠M*ᵐ)
         , (λ m≤n →
-            let Mᵐ*—↠Mⁿ* : M *₍ m ₎ —↠ M *₍ n ₎
-                Mᵐ*—↠Mⁿ* = triangle m≤n
-             in M *₍ n ₎ , M₁—↠Mⁿ* , —↠-trans M₂—↠Mᵐ* Mᵐ*—↠Mⁿ*)
+            let M*ᵐ—↠M*ⁿ : M *₍ m ₎ —↠ M *₍ n ₎
+                M*ᵐ—↠M*ⁿ = triangle m≤n
+             in M *₍ n ₎ , A—↠M*ⁿ , —↠-trans B—↠M*ᵐ M*ᵐ—↠M*ⁿ)
         ] (≤-total n m)
