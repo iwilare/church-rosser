@@ -4,7 +4,9 @@ open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; _≡⟨_⟩_; _∎)
 open import Function using (_∘_)
 open import Data.Nat using (ℕ; zero; suc)
 open import Data.Fin hiding (_+_; #_)
+
 open import DeBruijn
+
 
 postulate
   extensionality : ∀ {A B : Set} {f g : A → B}
@@ -12,9 +14,6 @@ postulate
       -----------------------
     → f ≡ g
 
---------------------------
--- σ-algebra operations --
---------------------------
 
 ⟪_⟫ : ∀ {n m} → Subst n m → Term n → Term m
 ⟪ σ ⟫ = subst σ
@@ -36,9 +35,6 @@ infixr 5 _⨟_
 _⨟_ : ∀ {n k m} → Subst n k → Subst k m → Subst n m
 σ ⨟ τ = ⟪ τ ⟫ ∘ σ
 
--------------------------
--- σ-algebra equations --
--------------------------
 
 ren : ∀ {n m} → Rename n m → Subst n m
 ren ρ = ids ∘ ρ
@@ -62,14 +58,12 @@ sub-dist {n}{m}{k}{σ}{τ}{M} = extensionality λ x → lemma {x = x}
   lemma : ∀ {x : Fin (suc n)} → ((M • σ) ⨟ τ) x ≡ ((subst τ M) • (σ ⨟ τ)) x
   lemma {x = zero} = refl
   lemma {x = suc x} = refl
-
-
-
+  
 
 cong-ext : ∀ {n m}{ρ ρ′ : Rename n m}
-   → (ρ ≡ ρ′)
-     ---------------------------------
-   → ext ρ ≡ ext ρ′
+  → (ρ ≡ ρ′)
+    ---------------------------------
+  → ext ρ ≡ ext ρ′
 cong-ext{n}{m}{ρ}{ρ′} rr = extensionality λ x → lemma {x}
   where
   lemma : ∀ {x : Fin (suc n)} → ext ρ x ≡ ext ρ′ x
@@ -77,9 +71,10 @@ cong-ext{n}{m}{ρ}{ρ′} rr = extensionality λ x → lemma {x}
   lemma {suc y} = cong suc (cong-app rr y)
 
 cong-rename : ∀ {n m}{ρ ρ′ : Rename n m}{M M′ : Term n}
-        → (ρ ≡ ρ′)  →  M ≡ M′
-          ------------------------------
-        → rename ρ M ≡ rename ρ′ M
+  → ρ ≡ ρ′
+  → M ≡ M′
+    ------------------------
+  → rename ρ M ≡ rename ρ′ M
 cong-rename {M = # x} rr refl = cong #_ (cong-app rr x)
 cong-rename {ρ = ρ} {ρ′ = ρ′} {M = ƛ N} rr refl =
    cong ƛ_ (cong-rename {ρ = ext ρ}{ρ′ = ext ρ′}{M = N} (cong-ext rr) refl)
@@ -87,8 +82,8 @@ cong-rename {M = L · M} rr refl =
    cong₂ _·_ (cong-rename rr refl) (cong-rename rr refl)
 
 cong-exts : ∀ {n m}{σ σ′ : Subst n m}
-   → (σ ≡ σ′)
-     -----------------------------------
+   → σ ≡ σ′
+     ----------------
    → exts σ ≡ exts σ′
 cong-exts{n}{m}{σ}{σ′} ss = extensionality λ x → lemma {x}
    where
@@ -97,9 +92,10 @@ cong-exts{n}{m}{σ}{σ′} ss = extensionality λ x → lemma {x}
    lemma {suc x} = cong (rename suc) (cong-app (ss) x)
 
 cong-sub : ∀ {n m}{σ σ′ : Subst n m}{M M′ : Term n}
-            → (σ ≡ σ′)  →  M ≡ M′
-              ------------------------------
-            → subst σ M ≡ subst σ′ M′
+  → σ ≡ σ′
+  → M ≡ M′
+    -----------------------
+  → subst σ M ≡ subst σ′ M′
 cong-sub {n}{m}{σ}{σ′}{# x} ss refl = cong-app ss x
 cong-sub {n}{m}{σ}{σ′}{ƛ M} ss refl =
    cong ƛ_ (cong-sub {σ = exts σ}{σ′ = exts σ′} {M = M} (cong-exts ss) refl)
@@ -108,14 +104,15 @@ cong-sub {n}{m}{σ}{σ′}{L · M} ss refl =
 
 cong-sub-zero : ∀ {n} {M M′ : Term n}
   → M ≡ M′
-    -----------------------------------------
-  → subst-zero M ≡ (subst-zero M′)
+    ----------------------------
+  → subst-zero M ≡ subst-zero M′
 cong-sub-zero {n}{M}{M′} mm′ =
    extensionality λ x → cong (λ z → subst-zero z x) mm′
 
 cong-cons : ∀ {n m}{M N : Term m}{σ τ : Subst n m}
-  → M ≡ N  →  (σ ≡ τ)
-    --------------------------------
+  → M ≡ N
+  → σ ≡ τ
+    -----------------
   → (M • σ) ≡ (N • τ)
 cong-cons{n}{m}{M}{N}{σ}{τ} refl st = extensionality lemma
   where
@@ -141,8 +138,6 @@ cong-seq {n}{m}{k}{σ}{σ′}{τ}{τ′} ss′ tt′ = extensionality lemma
      ≡⟨⟩
        (σ′ ⨟ τ′) x
      ∎
-
-
 
 
 ren-ext : ∀ {n m} {ρ : Rename n m}
@@ -362,9 +357,10 @@ subst-zero-exts-cons {n}{m}{σ}{M} =
       M • σ
     ∎
 
+
 subst-commute : ∀ {n m} {N : Term (suc n)} {M : Term n} {σ : Subst n m}
   → ⟪ exts σ ⟫ N [ ⟪ σ ⟫ M ] ≡ ⟪ σ ⟫ (N [ M ])
-subst-commute {n} {m} {N} {M} {σ} =
+subst-commute {n}{m}{N}{M}{σ} =
   begin
     ⟪ exts σ ⟫ N [ ⟪ σ ⟫ M ]
   ≡⟨⟩
@@ -397,7 +393,7 @@ subst-commute {n} {m} {N} {M} {σ} =
 
 rename-subst-commute : ∀ {n m} {N : Term (suc n)} {M : Term n} {ρ : Rename n m }
   → (rename (ext ρ) N) [ rename ρ M ] ≡ rename ρ (N [ M ])
-rename-subst-commute {n} {m} {N} {M} {ρ} =
+rename-subst-commute {n}{m}{N}{M}{ρ} =
   begin
     (rename (ext ρ) N) [ rename ρ M ]
   ≡⟨ cong-sub (cong-sub-zero (rename-subst-ren {M = M})) (rename-subst-ren {M = N}) ⟩
@@ -410,17 +406,13 @@ rename-subst-commute {n} {m} {N} {M} {ρ} =
     rename ρ (N [ M ])
   ∎
 
+
 infix 8 _〔_〕
 
-_〔_〕 : ∀ {n}
-        → Term (suc (suc n))
-        → Term n
-          ------------
-        → Term (suc n)
-_〔_〕 N M =
-   subst (exts (subst-zero M)) N
+_〔_〕 : ∀ {n} → Term (suc (suc n)) → Term n → Term (suc n)
+_〔_〕 N M = subst (exts (subst-zero M)) N
 
-substitution-lemma : ∀{n}{M : Term (suc (suc n))}{N : Term (suc n)}{L : Term n}
-    → (M [ N ]) [ L ] ≡ (M 〔 L 〕) [ (N [ L ]) ]
-substitution-lemma{M = M}{N = N}{L = L} =
-   sym (subst-commute{N = M}{M = N}{σ = subst-zero L})
+substitution-lemma : ∀{n} {M : Term (suc (suc n))} {N : Term (suc n)} {L : Term n}
+  → M [ N ] [ L ] ≡ (M 〔 L 〕) [ (N [ L ]) ]
+substitution-lemma {M = M}{N = N}{L = L} =
+  sym (subst-commute {N = M}{M = N}{σ = subst-zero L})

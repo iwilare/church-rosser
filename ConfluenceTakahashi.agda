@@ -1,21 +1,22 @@
-open import Relation.Binary.PropositionalEquality using (_≡_; refl; subst₂; sym; cong; cong₂)
+open import Relation.Binary.PropositionalEquality using (_≡_; refl; sym; cong; cong₂)
 open import Data.Nat using (ℕ; zero; suc; _≤_; z≤n; s≤s)
 open import Data.Nat.Properties using (≤-total)
 open import Data.Fin using (Fin; zero; suc)
-open import Data.Sum
-open import Data.Product using (∃; _×_; _,_; ∃-syntax)
+open import Data.Product using (∃; ∃-syntax; _×_; _,_)
+open import Data.Sum using ([_,_])
 open import DeBruijn
 open import Substitution
 open import Beta
-open import ChurchRosser
-open import Parallel
+open import BetaProperties
 open import Takahashi
+
 
 infix 5 _*₍_₎
 
 _*₍_₎ : ∀{n} → Term n → ℕ → Term n
 M *₍ zero ₎  = M
 M *₍ suc n ₎ = (M *) *₍ n ₎
+
 
 data _—↠₍_₎_ : ∀ {n} → Term n → ℕ → Term n → Set where
 

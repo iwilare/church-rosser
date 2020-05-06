@@ -1,9 +1,10 @@
-open import Data.Product
+open import Data.Product using (∃; ∃-syntax; _×_; _,_)
+
 open import DeBruijn
-open import Substitution
 open import Parallel
 open import Beta
 open import Takahashi
+
 
 theorem5 : ∀ {n} {M N : Term n}
   → M ⇉ N

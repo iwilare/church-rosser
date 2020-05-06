@@ -1,5 +1,5 @@
-open import Substitution
 open import DeBruijn
+
 
 infix 8 _*
 

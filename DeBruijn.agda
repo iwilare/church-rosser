@@ -1,6 +1,6 @@
-import Relation.Binary.PropositionalEquality as Eq
-open import Data.Nat using (ℕ; zero; suc)
-open import Data.Fin hiding (_+_; #_)
+open import Data.Nat using (ℕ; suc)
+open import Data.Fin using (Fin; zero; suc)
+
 
 infix  9  #_
 infixl 7  _·_
@@ -10,6 +10,7 @@ data Term : ℕ → Set where
   #_  : ∀ {n : ℕ} → Fin n           → Term n
   ƛ_  : ∀ {n : ℕ} → Term (suc n)    → Term n
   _·_ : ∀ {n : ℕ} → Term n → Term n → Term n
+
 
 Rename : ℕ → ℕ → Set
 Rename n m = Fin n → Fin m
@@ -38,6 +39,7 @@ subst σ (M · N) = subst σ M · subst σ N
 subst-zero : ∀ {n} → Term n → Subst (suc n) n
 subst-zero M zero    = M
 subst-zero M (suc x) = # x
+
 
 infix 8 _[_]
 

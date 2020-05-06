@@ -1,12 +1,10 @@
-import Relation.Binary.PropositionalEquality as Eq
-open Eq using (_≡_; refl; subst₂; cong)
-open import Data.Nat.Base
-open import Data.Fin hiding (_+_; #_)
-open import Data.Product using (∃; _×_; _,_; ∃-syntax)
+open import Data.Product using (∃; ∃-syntax; _×_; _,_)
+
 open import DeBruijn
-open import Substitution
-open import Beta
 open import Parallel
+open import Beta
+open import Takahashi
+
 
 par-diamond : ∀ {n} {M N N′ : Term n}
   → M ⇉ N
