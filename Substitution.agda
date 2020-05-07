@@ -58,7 +58,7 @@ sub-dist {n}{m}{k}{σ}{τ}{M} = extensionality λ x → lemma {x = x}
   lemma : ∀ {x : Fin (suc n)} → ((M • σ) ⨟ τ) x ≡ ((subst τ M) • (σ ⨟ τ)) x
   lemma {x = zero} = refl
   lemma {x = suc x} = refl
-  
+
 
 cong-ext : ∀ {n m}{ρ ρ′ : Rename n m}
   → (ρ ≡ ρ′)
