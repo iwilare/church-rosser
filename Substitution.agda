@@ -412,7 +412,7 @@ infix 8 _〔_〕
 _〔_〕 : ∀ {n} → Term (suc (suc n)) → Term n → Term (suc n)
 _〔_〕 N M = subst (exts (subst-zero M)) N
 
-substitution-lemma : ∀{n} {M : Term (suc (suc n))} {N : Term (suc n)} {L : Term n}
+substitution-lemma : ∀ {n} {M : Term (suc (suc n))} {N : Term (suc n)} {L : Term n}
   → M [ N ] [ L ] ≡ (M 〔 L 〕) [ (N [ L ]) ]
 substitution-lemma {M = M}{N = N}{L = L} =
   sym (subst-commute {N = M}{M = N}{σ = subst-zero L})

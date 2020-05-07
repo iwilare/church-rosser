@@ -35,11 +35,11 @@ data _⇉_ : ∀ {n} → Term n → Term n → Set where
     → (ƛ M) · N ⇉ M′ [ N′ ]
 
 
-par-subst : ∀{n m} → Subst n m → Subst n m → Set
+par-subst : ∀ {n m} → Subst n m → Subst n m → Set
 par-subst σ σ′ = ∀ {x} → σ x ⇉ σ′ x
 
 
-par-rename : ∀{n m} {ρ : Rename n m} {M M′ : Term n}
+par-rename : ∀ {n m} {ρ : Rename n m} {M M′ : Term n}
   → M ⇉ M′
     ------------------------
   → rename ρ M ⇉ rename ρ M′
@@ -51,7 +51,7 @@ par-rename {n}{m}{ρ} (⇉-β {n}{N}{N′}{M}{M′} p₁ p₂)
 ... | G rewrite rename-subst-commute {n}{m}{N′}{M′}{ρ} = G
 
 
-par-subst-exts : ∀{n m} {σ σ′ : Subst n m}
+par-subst-exts : ∀ {n m} {σ σ′ : Subst n m}
   → par-subst σ σ′
     ---------------------------
   → par-subst (exts σ) (exts σ′)
@@ -59,7 +59,7 @@ par-subst-exts s {x = zero} = ⇉-c
 par-subst-exts s {x = suc x} = par-rename s
 
 
-subst-par : ∀{n m} {σ σ′ : Subst n m} {M M′ : Term n}
+subst-par : ∀ {n m} {σ σ′ : Subst n m} {M M′ : Term n}
   → par-subst σ σ′
   → M ⇉ M′
     ----------------------
@@ -85,7 +85,7 @@ par-subst-zero M⇉M′ {zero} = M⇉M′
 par-subst-zero M⇉M′ {suc x} = ⇉-c
 
 
-sub-par : ∀{n} {M M′ : Term (suc n)} {N N′ : Term n}
+sub-par : ∀ {n} {M M′ : Term (suc n)} {N N′ : Term n}
   → M ⇉ M′
   → N ⇉ N′
     -------------------
@@ -101,7 +101,7 @@ par-refl {M = ƛ N}   = ⇉-ƛ par-refl
 par-refl {M = L · M} = ⇉-ξ par-refl par-refl
 
 
-beta-par : ∀{n} {M N : Term n}
+beta-par : ∀ {n} {M N : Term n}
   → M —→ N
     ------
   → M ⇉ N

@@ -14,7 +14,7 @@ open import Takahashi
 
 infix 5 _*⁽_⁾
 
-_*⁽_⁾ : ∀{n} → Term n → ℕ → Term n
+_*⁽_⁾ : ∀ {n} → Term n → ℕ → Term n
 M *⁽ zero ⁾  = M
 M *⁽ suc k ⁾ = (M *) *⁽ k ⁾
 

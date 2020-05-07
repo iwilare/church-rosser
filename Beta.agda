@@ -45,7 +45,7 @@ data _—↠_ : ∀ {n} → Term n → Term n → Set where
     → M —↠ N
 
 
-—↠-trans : ∀{n} {M N L : Term n}
+—↠-trans : ∀ {n} {M N L : Term n}
   → M —↠ L
   → L —↠ N
     ------
