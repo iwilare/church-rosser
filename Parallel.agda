@@ -5,7 +5,7 @@ open import Data.Fin hiding (_+_; #_)
 open import Data.Product using (∃; _×_; _,_; ∃-syntax)
 
 open import DeBruijn
-open import Substitution
+open import Substitution using (rename-subst-commute; subst-commute)
 open import Beta
 
 
