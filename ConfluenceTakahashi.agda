@@ -55,11 +55,8 @@ lemma3-3 {M = (ƛ M)   · N} (—→-ξᵣ       {N′ = N′} N—→N′)  = (
 lemma3-3 {M = (ƛ M)   · N} (—→-ξₗ (—→-ƛ {M′ = M′} M—→M′)) = (ƛ M′) · N  —→⟨ —→-β ⟩ sub-betas {N = N} (lemma3-3 M—→M′) lemma3-2
 
 
-app-*-join : ∀ {n} (M N : Term n)
-  → M * · N * —↠ (M · N) *
-app-*-join (# x)     N = # x · N * ∎
-app-*-join (ƛ M)     N = (ƛ M *) · N * —→⟨ —→-β ⟩ subst (subst-zero (N *)) (M *) ∎
-app-*-join (M₁ · M₂) N = (M₁ · M₂) * · N * ∎
+_*ˢ : ∀ {n m} (σ : Subst n m) → Subst n m
+_*ˢ σ = λ x → (σ x) *
 
 
 rename-* : ∀ {n m} (ρ : Rename n m) (M : Term n)
@@ -74,42 +71,32 @@ rename-* ρ ((ƛ M)   · N) rewrite sym (rename-subst-commute {N = M *}{M = N *}
                                = refl
 
 
-_*ˢ : ∀ {n m} (σ : Subst n m) → Subst n m
-_*ˢ σ = λ x → (σ x) *
-
-
-rename-suc-ts : ∀ {n m} (σ : Subst n m) (x : Fin n)
-  → rename suc ((σ *ˢ) x) ≡ ((exts σ) *ˢ) (suc x)
-rename-suc-ts σ x with σ x
-rename-suc-ts σ x | # _         = refl
-rename-suc-ts σ x | ƛ M         = cong ƛ_ (rename-* (ext suc) M)
-rename-suc-ts σ x | # _     · N = cong₂ _·_ refl                     (rename-* suc N)
-rename-suc-ts σ x | M₁ · M₂ · N = cong₂ _·_ (rename-* suc (M₁ · M₂)) (rename-* suc N)
-rename-suc-ts σ x | (ƛ M)   · N rewrite sym (rename-subst-commute {N = M *}{M = N *}{ρ = suc})
-                                      | rename-* (ext suc) M
-                                      | rename-* suc N
-                                      = refl
-
-
-exts-ts-commute : ∀ {n m} {σ : Subst n m}
+exts-ts-commute : ∀ {n m} (σ : Subst n m)
   → exts (σ *ˢ) ≡ (exts σ) *ˢ
-exts-ts-commute {n}{m}{σ} = extensionality exts-ts-commute′
+exts-ts-commute {n} σ = extensionality exts-ts-commute′
   where
     exts-ts-commute′ : (x : Fin (suc n))
       → (exts (σ *ˢ)) x ≡ ((exts σ) *ˢ) x
     exts-ts-commute′ zero    = refl
-    exts-ts-commute′ (suc x) = rename-suc-ts σ x
+    exts-ts-commute′ (suc x) = rename-* suc (σ x)
+
+
+app-*-join : ∀ {n} (M N : Term n)
+  → M * · N * —↠ (M · N) *
+app-*-join (# x)     N = # x · N * ∎
+app-*-join (ƛ M)     N = (ƛ M *) · N * —→⟨ —→-β ⟩ subst (subst-zero (N *)) (M *) ∎
+app-*-join (M₁ · M₂) N = (M₁ · M₂) * · N * ∎
 
 
 subst-ts : ∀ {n m} (σ : Subst n m) (M : Term n)
   → subst (σ *ˢ) (M *) —↠ (subst σ M) *
 subst-ts σ (# x) = σ x * ∎
-subst-ts σ (ƛ M) rewrite exts-ts-commute {σ = σ} = —↠-cong-ƛ (subst-ts (exts σ) M)
-subst-ts σ (# x · N) = —↠-trans (—↠-cong (subst-ts σ (# x)) (subst-ts σ N))
+subst-ts σ (ƛ M) rewrite exts-ts-commute σ = —↠-cong-ƛ (subst-ts (exts σ) M)
+subst-ts σ (# x · N) = —↠-trans (—↠-congᵣ (subst-ts σ N))
                                 (app-*-join (σ x) (subst σ N))
 subst-ts σ (M₁ · M₂ · N) = —↠-cong (subst-ts σ (M₁ · M₂)) (subst-ts σ N)
 subst-ts σ ((ƛ M) · N) rewrite sym (subst-commute {N = M *}{M = N *}{σ = σ *ˢ})
-                             | exts-ts-commute {σ = σ}
+                             | exts-ts-commute σ
                              = sub-betas (subst-ts (exts σ) M) (subst-ts σ N)
 
 

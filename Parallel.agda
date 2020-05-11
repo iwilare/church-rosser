@@ -137,7 +137,7 @@ data _⇉*_ : ∀ {n} → Term n → Term n → Set where
       ------
     → M ⇉* M
 
-  _⇉⟨_⟩_ : ∀ {n} {N L : Term n} (M : Term n)
+  _⇉⟨_⟩_ : ∀ {n} {L N : Term n} (M : Term n)
     → M ⇉  L
     → L ⇉* N
       ------
