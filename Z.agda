@@ -67,4 +67,3 @@ z-semi-confluence z@(_* , Z₁ , Z₂) MA (_▻_ {j = M′} M*M′ M′B) =
 z-confluence : ∀ {t r} {T : Set t} {R : Rel T r} →
   Z R → Confluence R
 z-confluence z = semi-to-confluence (z-semi-confluence z)
-

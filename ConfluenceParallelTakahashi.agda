@@ -6,23 +6,23 @@ open import Beta
 open import Takahashi
 
 
-theorem5 : ∀ {n} {M N : Term n}
+par-triangle : ∀ {n} {M N : Term n}
   → M ⇉ N
     -------
   → N ⇉ M *
-theorem5 {M = # x} ⇉-c = ⇉-c
-theorem5 {M = ƛ M} (⇉-ƛ M⇉N) = ⇉-ƛ (theorem5 M⇉N)
-theorem5 {M = (ƛ M) · N} (⇉-β M⇉M′ N⇉N′) = sub-par (theorem5 M⇉M′) (theorem5 N⇉N′)
-theorem5 {M = # _   · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (theorem5 M⇉M′) (theorem5 N⇉N′)
-theorem5 {M = _ · _ · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (theorem5 M⇉M′) (theorem5 N⇉N′)
-theorem5 {M = (ƛ _) · N} (⇉-ξ (⇉-ƛ M⇉M′) N⇉N′) = ⇉-β (theorem5 M⇉M′) (theorem5 N⇉N′)
+par-triangle {M = # x} ⇉-c = ⇉-c
+par-triangle {M = ƛ M} (⇉-ƛ M⇉N) = ⇉-ƛ (par-triangle M⇉N)
+par-triangle {M = (ƛ M) · N} (⇉-β M⇉M′ N⇉N′) = sub-par (par-triangle M⇉M′) (par-triangle N⇉N′)
+par-triangle {M = # _   · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (par-triangle M⇉M′) (par-triangle N⇉N′)
+par-triangle {M = _ · _ · N} (⇉-ξ M⇉M′ N⇉N′)       = ⇉-ξ (par-triangle M⇉M′) (par-triangle N⇉N′)
+par-triangle {M = (ƛ _) · N} (⇉-ξ (⇉-ƛ M⇉M′) N⇉N′) = ⇉-β (par-triangle M⇉M′) (par-triangle N⇉N′)
 
 
 par-diamond : ∀ {n} {M A B : Term n}
   →          M ⇉ A  →  M ⇉ B
     --------------------------
   → ∃[ N ] ((A ⇉ N) × (B ⇉ N))
-par-diamond {M = M} M⇉A M⇉B = M * , theorem5 M⇉A , theorem5 M⇉B
+par-diamond {M = M} M⇉A M⇉B = M * , par-triangle M⇉A , par-triangle M⇉B
 
 
 strip : ∀ {n} {M A B : Term n}
