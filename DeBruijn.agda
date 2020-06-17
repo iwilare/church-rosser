@@ -45,4 +45,3 @@ infix 8 _[_]
 
 _[_] : ∀ {n} → Term (suc n) → Term n → Term n
 M [ N ] = subst (subst-zero N) M
-

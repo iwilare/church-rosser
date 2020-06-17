@@ -18,14 +18,14 @@ data _—→_ : ∀ {n} → Term n → Term n → Set where
       ---------------
     → M · N —→ M · N′
 
-  —→-β : ∀ {n} {M : Term (suc n)} {N : Term n}
-      --------------------
-    → (ƛ M) · N —→ M [ N ]
-
   —→-ƛ : ∀ {n} {M M′ : Term (suc n)}
     → M —→ M′
       -----------
     → ƛ M —→ ƛ M′
+
+  —→-β : ∀ {n} {M : Term (suc n)} {N : Term n}
+      --------------------
+    → (ƛ M) · N —→ M [ N ]
 
 
 infix  2 _—↠_

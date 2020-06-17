@@ -8,7 +8,7 @@ open import Data.Sum using ([_,_])
 open import DeBruijn
 open import Substitution using (rename-subst-commute; subst-commute; extensionality)
 open import Beta
-open import BetaProperties using (sub-betas)
+open import BetaSubstitutivity using (sub-betas)
 open import Takahashi
 
 
