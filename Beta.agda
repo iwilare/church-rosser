@@ -4,7 +4,7 @@ open import Substitution using (rename-subst-commute; subst-commute)
 open import DeBruijn
 
 
-infix 2 _—→_
+infix 3 _—→_
 
 data _—→_ : ∀ {n} → Term n → Term n → Set where
 
@@ -28,9 +28,9 @@ data _—→_ : ∀ {n} → Term n → Term n → Set where
     → (ƛ M) · N —→ M [ N ]
 
 
-infix  2 _—↠_
-infixr 2 _—→⟨_⟩_
-infix  3 _∎
+infix  3 _—↠_
+infixr 3 _—→⟨_⟩_
+infix  4 _∎
 
 data _—↠_ : ∀ {n} → Term n → Term n → Set where
 

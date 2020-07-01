@@ -6,10 +6,9 @@ open import Beta
 
 
 par-diamond : ∀ {n} {M N N′ : Term n}
-  → M ⇉ N
-  → M ⇉ N′
-    ---------------------------
-  → ∃[ L ] ((N ⇉ L) × (N′ ⇉ L))
+  →         M ⇉ N → M  ⇉ N′
+    -----------------------
+  → ∃[ L ] (N ⇉ L × N′ ⇉ L)
 par-diamond (⇉-c {x = x}) ⇉-c = # x ,  ⇉-c , ⇉-c
 par-diamond (⇉-ƛ p1) (⇉-ƛ p2)
     with par-diamond p1 p2
@@ -42,9 +41,9 @@ par-diamond (⇉-β p1 p3) (⇉-β p2 p4)
 
 
 strip : ∀ {n} {M A B : Term n}
-  →          M ⇉  A  →  M ⇉* B
-    ----------------------------
-  → ∃[ N ] ((A ⇉* N) × (B ⇉  N))
+  →         M ⇉  A → M ⇉* B
+    ------------------------
+  → ∃[ N ] (A ⇉* N × B ⇉  N)
 strip {A = A} M⇉A (M ∎) = A , (A ∎) , M⇉A
 strip {A = A} M⇉A (M ⇉⟨　M⇉M′ ⟩ M′⇉*B)
     with par-diamond M⇉A M⇉M′
@@ -55,9 +54,9 @@ strip {A = A} M⇉A (M ⇉⟨　M⇉M′ ⟩ M′⇉*B)
 
 
 par-confluence : ∀ {n} {M A B : Term n}
-  →          M ⇉* A  →  M ⇉* B
-    ----------------------------
-  → ∃[ N ] ((A ⇉* N) × (B ⇉* N))
+  →         M ⇉* A → M ⇉* B
+    ------------------------
+  → ∃[ N ] (A ⇉* N × B ⇉* N)
 par-confluence {B = B} (M ∎) M⇉*B = B , M⇉*B , (B ∎)
 par-confluence {B = B} (M ⇉⟨ M⇉A ⟩ A⇉*A′) M⇉*B
     with strip M⇉A M⇉*B
@@ -68,9 +67,9 @@ par-confluence {B = B} (M ⇉⟨ M⇉A ⟩ A⇉*A′) M⇉*B
 
 
 confluence : ∀ {n} {M A B : Term n}
-  →          M —↠ A  →  M —↠ B
-    ----------------------------
-  → ∃[ N ] ((A —↠ N) × (B —↠ N))
+  →         M —↠ A → M —↠ B
+    ------------------------
+  → ∃[ N ] (A —↠ N × B —↠ N)
 confluence M—↠A M—↠B
     with par-confluence (betas-pars M—↠A) (betas-pars M—↠B)
 ... | N , A⇉*N , B⇉*N =

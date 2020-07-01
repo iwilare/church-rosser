@@ -12,7 +12,7 @@ open import BetaSubstitutivity using (sub-betas)
 open import Takahashi
 
 
-infix 5 _*⁽_⁾
+infix 8 _*⁽_⁾
 
 _*⁽_⁾ : ∀ {n} → Term n → ℕ → Term n
 M *⁽ zero ⁾  = M
@@ -102,7 +102,7 @@ subst-ts σ ((ƛ M) · N) rewrite sym (subst-commute {N = M *}{M = N *}{σ = σ 
 
 subst-zero-ts : ∀ {n} {N : Term n}
   → subst-zero (N *) ≡ (subst-zero N) *ˢ
-subst-zero-ts = extensionality (λ { zero → refl ; (suc r) → refl })
+subst-zero-ts = extensionality (λ { zero → refl ; (suc x) → refl })
 
 
 lemma3-4 : ∀ {n} (M : Term (suc n)) (N : Term n)
@@ -177,9 +177,9 @@ complete-* M (s≤s k) = complete-* (M *) k
 
 
 theorem3-9 : ∀ {n} {M A B : Term n}
-  →          M —↠ A  →  M —↠ B
-    ----------------------------
-  → ∃[ N ] ((A —↠ N) × (B —↠ N))
+  →         M —↠ A → M —↠ B
+    ------------------------
+  → ∃[ N ] (A —↠ N × B —↠ N)
 theorem3-9 {M = M} M—↠A M—↠B =
     let n , M—↠ⁿA = unnamed-named M—↠A
         m , M—↠ᵐB = unnamed-named M—↠B

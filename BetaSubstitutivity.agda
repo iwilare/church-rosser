@@ -7,7 +7,7 @@ open import DeBruijn
 open import Beta
 
 
-infix 2 _—↠ˢ_
+infix 3 _—↠ˢ_
 
 _—↠ˢ_ : ∀ {n m} → Subst n m → Subst n m → Set
 σ —↠ˢ σ′ = ∀ {x} → σ x —↠ σ′ x

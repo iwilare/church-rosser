@@ -9,7 +9,7 @@ open import Substitution using (rename-subst-commute; subst-commute)
 open import Beta
 
 
-infix 4 _⇉_
+infix 3 _⇉_
 
 data _⇉_ : ∀ {n} → Term n → Term n → Set where
 
@@ -127,9 +127,9 @@ par-betas {M = (ƛ M) · N} (⇉-β {M′ = M′}{N′ = N′} p₁ p₂) =
   —↠-trans (—↠-trans a b) c
 
 
-infix  2 _⇉*_
-infixr 2 _⇉⟨_⟩_
-infix  3 _∎
+infix  3 _⇉*_
+infixr 3 _⇉⟨_⟩_
+infix  4 _∎
 
 data _⇉*_ : ∀ {n} → Term n → Term n → Set where
 
