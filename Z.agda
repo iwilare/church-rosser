@@ -1,4 +1,4 @@
-open import Relation.Binary.Core
+open import Relation.Binary.Core using (Rel; Reflexive; Trans)
 open import Level using (Level; _⊔_; suc)
 open import Data.Product using (Σ; _×_; _,_; Σ-syntax;  ∃-syntax; proj₁; proj₂)
 
