@@ -13,7 +13,7 @@ open import ConfluenceTakahashi using (lemma3-3; lemma3-5)
 star-left :  ∀ {n} {M L N : Term n}
   → M —→ L
   → Star _—→_ L N
-    --------------
+    -------------
   → Star _—→_ M N
 star-left ML ε = ε ▻ ML
 star-left ML (L*N′ ▻ N′N) =
@@ -22,7 +22,7 @@ star-left ML (L*N′ ▻ N′N) =
 
 betas-star : ∀ {n} {M N : Term n}
   → M —↠ N
-    --------------
+    -------------
   → Star _—→_ M N
 betas-star (M ∎) = ε
 betas-star (M —→⟨ M—→M′ ⟩ M′—↠N) =
