@@ -55,8 +55,8 @@ lemma3-3 {M = (ƛ M)   · N} (—→-ξᵣ       {N′ = N′} N—→N′)  = (
 lemma3-3 {M = (ƛ M)   · N} (—→-ξₗ (—→-ƛ {M′ = M′} M—→M′)) = (ƛ M′) · N  —→⟨ —→-β ⟩ sub-betas {N = N} (lemma3-3 M—→M′) lemma3-2
 
 
-_*ˢ : ∀ {n m} (σ : Subst n m) → Subst n m
-_*ˢ σ = λ x → (σ x) *
+_*ˢ : ∀ {n m} → Subst n m → Subst n m
+σ *ˢ = λ x → (σ x) *
 
 
 rename-* : ∀ {n m} (ρ : Rename n m) (M : Term n)
