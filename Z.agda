@@ -1,7 +1,6 @@
-open import Relation.Binary.Core using (Rel; Reflexive; Trans)
+open import Relation.Binary using (Rel; Reflexive; Trans)
 open import Level using (Level; _⊔_; suc)
 open import Data.Product using (Σ; _×_; _,_; Σ-syntax;  ∃-syntax; proj₁; proj₂)
-
 
 data Star {t r} {T : Set t} (R : Rel T r) : Rel T (t ⊔ r) where
   ε   : Reflexive (Star R)

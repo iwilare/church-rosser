@@ -1,6 +1,6 @@
 import Relation.Binary.PropositionalEquality as Eq
 open Eq using (_≡_; refl; sym; cong; cong₂; cong-app)
-open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; _≡⟨_⟩_; _∎)
+open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; step-≡; _∎)
 open import Function using (_∘_)
 open import Data.Nat using (ℕ; zero; suc)
 open import Data.Fin hiding (_+_; #_)
